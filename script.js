@@ -44,41 +44,16 @@ var addopr = (event, opr) => {
   a.setAttribute('draggable', 'true');
   b = document.createElement("div");
   b.className = "dropzone";
+  // dropzones(b);
   d = document.createElement("div");
   d.className = "dropzone";
+  // dropzones(d);
   c = document.createElement("p");
   c.className = "do";
   c.appendChild(document.createTextNode(opr));
   a.appendChild(b);
   a.appendChild(c);
   a.appendChild(d);
-  
-  a.addEventListener("dragover", (event) => {
-    // prevent default to allow drop
-    event.preventDefault();
-  });
-
-  a.addEventListener("dragenter", (event) => {
-    // highlight potential drop target when the draggable element enters it
-    event.target.classList.add("dragover");
-  });
-
-  a.addEventListener("dragleave", (event) => {
-    // reset background of potential drop target when the draggable element leaves it
-    event.target.classList.remove("dragover");
-  });
-
-  a.addEventListener("drop", (event) => {
-    // prevent default action (open as link for some elements)
-    event.preventDefault();
-    // move dragged element to the selected drop target
-    event.target.classList.remove("dragover");
-    dragged.style.position = "relative";
-    dragged.style.top = "0px";
-    dragged.style.left = "0px";
-    event.target.appendChild(dragged);
-    event.stopPropagation();
-  });
 
   a.addEventListener("drag", (event) => {
     console.log("dragging");
@@ -93,6 +68,7 @@ var addopr = (event, opr) => {
     event.target.classList.remove("dragging");
   });
   
+  dropzones(a);
   document.getElementById("canvas").appendChild(a)
 }
 
@@ -114,8 +90,7 @@ var addopr = (event, opr) => {
 // });
 
 /* events fired on the drop targets */
-const dropzones = document.querySelectorAll(".dropzone");
-dropzones.forEach((target) => {
+const dropzones = (target) => {
   target.addEventListener("dragover", (event) => {
     // prevent default to allow drop
     event.preventDefault();
@@ -134,16 +109,17 @@ dropzones.forEach((target) => {
   target.addEventListener("drop", (event) => {
     // prevent default action (open as link for some elements)
     event.preventDefault();
-    console.log(".,hatipnr")
     // move dragged element to the selected drop target
     event.target.classList.remove("dragover");
-    dragged.style.position = "relative";
-    dragged.style.top = "0px";
-    dragged.style.left = "0px";
-    event.target.appendChild(dragged);
+    if (event.target.tagName !== "P") {
+      dragged.style.position = "relative";
+      dragged.style.top = "0px";
+      dragged.style.left = "0px";
+      event.target.appendChild(dragged);
+    }
     event.stopPropagation();
   });
-});
+};
 
 const canvas = document.getElementById("canvas");
 canvas.addEventListener("drop", (event) => {
@@ -161,32 +137,7 @@ canvas.addEventListener("dragover", (event) => {
 
 const calvas = document.getElementById("calvas");
 
-calvas.addEventListener("dragover", (event) => {
-  // prevent default to allow drop
-  event.preventDefault();
-});
-
-calvas.addEventListener("dragenter", (event) => {
-  // highlight potential drop target when the draggable element enters it
-  event.target.classList.add("dragover");
-});
-
-calvas.addEventListener("dragleave", (event) => {
-  // reset background of potential drop target when the draggable element leaves it
-  event.target.classList.remove("dragover");
-});
-
-calvas.addEventListener("drop", (event) => {
-  // prevent default action (open as link for some elements)
-  event.preventDefault();
-  // move dragged element to the selected drop target
-  event.target.classList.remove("dragover");
-  dragged.style.position = "relative";
-  dragged.style.top = "0px";
-  dragged.style.left = "0px";
-  event.target.appendChild(dragged);
-  event.stopPropagation();
-});
+dropzones(calvas);
   
 const dotext = document.querySelectorAll(".do");
 dotext.forEach((target) => {
