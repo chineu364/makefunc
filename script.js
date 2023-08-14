@@ -1,16 +1,12 @@
 let dragged;
 
 let calfunc = {
-  "+": (a, b) => { return +a + +b },
-  "-": (a, b) => { return +a - +b },
-  "*": (a, b) => { return +a * +b },
-  "/": (a, b) => { return +a / +b },
-  "NAND": (a, b) => { return !(a!=="false" && b!=="false") },
   "+": ([a, b]) => { return +a + +b },
   "-": ([a, b]) => { return +a - +b },
   "*": ([a, b]) => { return +a * +b },
   "/": ([a, b]) => { return +a / +b },
   "NAND": ([a, b]) => { return (!(a==="true" && b==="true")).toString() },
+  "NOT": ([a]) => { return (!(a==="true")).toString() },
 }
 
 var addnum = (event, value) => {
@@ -43,18 +39,21 @@ var addnum = (event, value) => {
   });
 }
 
-var addopr = (event, opr) => {
+var addopr = (event, opr, testparam=true) => {
   a = document.createElement("div");
   a.className = "deokenbox draggable "+opr;
   a.setAttribute('draggable', 'true');
-  b = document.createElement("div");
-  b.className = "dropzone";
+  if (testparam) {
+    b = document.createElement("div");
+    b.className = "dropzone";
+  }
   d = document.createElement("div");
   d.className = "dropzone";
   c = document.createElement("p");
   c.className = "do";
   c.appendChild(document.createTextNode(opr));
-  a.appendChild(b);
+  if (testparam)
+    a.appendChild(b);
   a.appendChild(c);
   a.appendChild(d);
   
@@ -224,6 +223,9 @@ addadd.addEventListener("click", (event) => { return addopr(event, "+"); })
 
 const addNAND = document.getElementById("addNAND");
 addNAND.addEventListener("click", (event) => { return addopr(event, "NAND"); })
+
+const addNOT = document.getElementById("addNOT");
+addNOT.addEventListener("click", (event) => { return addopr(event, "NOT", false); })
 
 function evalhagi(expr) {
   if (expr.classList.contains("deokenbox")) {
