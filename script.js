@@ -1,11 +1,12 @@
 let dragged;
 
 let calfunc = {
-  "+": (a, b) => { return +a + +b },
-  "-": (a, b) => { return +a - +b },
-  "*": (a, b) => { return +a * +b },
-  "/": (a, b) => { return +a / +b },
-  "NAND": (a, b) => { return !(a!=="false" && b!=="false") },
+  "+": ([a, b]) => { return +a + +b },
+  "-": ([a, b]) => { return +a - +b },
+  "*": ([a, b]) => { return +a * +b },
+  "/": ([a, b]) => { return +a / +b },
+  "NAND": ([a, b]) => { return (!(a==="true" && b==="true")).toString() },
+  "NOT": ([a]) => { return (!(a==="true")).toString() },
 }
 
 var addnum = (event, value) => {
@@ -38,12 +39,14 @@ var addnum = (event, value) => {
   });
 }
 
-var addopr = (event, opr) => {
+var addopr = (event, opr, testparam=true) => {
   a = document.createElement("div");
   a.className = "deokenbox draggable "+opr;
   a.setAttribute('draggable', 'true');
-  b = document.createElement("div");
-  b.className = "dropzone";
+  if (testparam) {
+    b = document.createElement("div");
+    b.className = "dropzone";
+  }
   // dropzones(b);
   d = document.createElement("div");
   d.className = "dropzone";
@@ -51,7 +54,8 @@ var addopr = (event, opr) => {
   c = document.createElement("p");
   c.className = "do";
   c.appendChild(document.createTextNode(opr));
-  a.appendChild(b);
+  if (testparam)
+    a.appendChild(b);
   a.appendChild(c);
   a.appendChild(d);
 
@@ -157,13 +161,13 @@ dotext.forEach((target) => {
 // });
 
 const add1 = document.getElementById("add1")
-add1.addEventListener("click", (event) => { return addnum(event, 1); })
+add1.addEventListener("click", (event) => { return addnum(event, "1"); })
 
 const addtrue = document.getElementById("addtrue")
-addtrue.addEventListener("click", (event) => { return addnum(event, true); })
+addtrue.addEventListener("click", (event) => { return addnum(event, "true"); })
 
 const addfalse = document.getElementById("addfalse")
-addfalse.addEventListener("click", (event) => { return addnum(event, false); })
+addfalse.addEventListener("click", (event) => { return addnum(event, "false"); })
 
 const addadd = document.getElementById("addadd");
 addadd.addEventListener("click", (event) => { return addopr(event, "+"); })
@@ -171,13 +175,22 @@ addadd.addEventListener("click", (event) => { return addopr(event, "+"); })
 const addNAND = document.getElementById("addNAND");
 addNAND.addEventListener("click", (event) => { return addopr(event, "NAND"); })
 
+const addNOT = document.getElementById("addNOT");
+addNOT.addEventListener("click", (event) => { return addopr(event, "NOT", false); })
+
 function evalhagi(expr) {
   if (expr.classList.contains("deokenbox")) {
-    const [operand1, operator, operand2] = expr.children;
-    const num1 = evalhagi(operand1.children[0]);
-    const num2 = evalhagi(operand2.children[0]);
+    // const [operand1, operator, operand2] = expr.children;
+    // const num1 = evalhagi(operand1.children[0]);
+    // const num2 = evalhagi(operand2.children[0]);
+    const operand = Array.from(expr.children).filter((child) => {
+      return child.tagName !== "P"
+    }).map((child) => {
+      return evalhagi(child.children[0])
+    });
+    console.log(operand);
 
-    return calfunc[operator.innerHTML](num1, num2);
+    return calfunc[expr.classList[2]](operand);
   }
 
   return expr.children[0].innerHTML
